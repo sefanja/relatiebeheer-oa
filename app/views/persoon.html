@@ -1,0 +1,136 @@
+<div class="page-header">
+  <h1 ng-if="status.loading > 0"><i class="fa fa-spinner fa-spin fa-fw"></i></h1>
+  <h1 ng-if="status.loading == 0">
+    <!-- if -->
+    <span ng-if="persoon.$id">
+      <i class="fa fa-user fa-fw"></i>
+      {{getters.naam(persoon)}}
+    </span>
+    <!-- else -->
+    <span ng-if="!persoon.$id">
+      <i class="fa fa-user-plus fa-fw"></i>
+      <em>Nieuw persoon</em>
+    </span>
+  </h1>
+  <h1 ng-if="status.loading < 0"><i class="fa fa-exclamation-triangle fa-fw"></i> Fout bij laden</h1>
+</div>
+
+<form name="form">
+
+  <div ng-if="!persoon.$id">
+    <button ng-if="status.saving == 0" ng-click="opslaan()" type="submit" class="btn btn-primary" ng-disabled="form.$pristine"><i class="fa fa-save fa-lg fa-fw"></i> Opslaan</button>
+    <button ng-if="status.saving > 0" type="submit" class="btn btn-primary" disabled="disabled"><i class="fa fa-spinner fa-spin fa-lg fa-fw"></i> Opslaan</button>
+    <button ng-if="status.saving < 0" ng-click="opslaan()" type="submit" class="btn btn-danger"><i class="fa fa-save fa-lg fa-fw"></i> Opnieuw proberen</button>
+  </div>
+
+  <div ng-if="persoon.$id">
+    <button ng-if="status.deleting == 0" ng-click="verwijderen()" type="button" class="btn btn-primary"><i class="fa fa-user-times fa-lg fa-fw"></i> Verwijderen</button>
+    <button ng-if="status.deleting > 0" type="button" class="btn btn-primary" disabled="disabled"><i class="fa fa-spinner fa-spin fa-lg fa-fw"></i> Verwijderen</button>
+    <button ng-if="status.deleting < 0" ng-click="verwijderen()" type="button" class="btn btn-danger"><i class="fa fa-user-times fa-lg fa-fw"></i> Opnieuw proberen</button>
+  </div>
+
+  <div class="row marketing">
+    <div ng-if="persoon.$id" class="row">
+      <div class="col-md-12">
+        <fieldset>
+          <legend><i class="fa fa-users fa-fw"></i> Huisgezin</legend>
+          <div ng-if="persoon.huisgezin" class="panel panel-default">
+            <table st-table="personen" class="table">
+              <tbody>
+              <tr ng-repeat="lid in personen | filter:{huisgezin: persoon.huisgezin}:true | orderBy:['roepnaam','tussenvoegsels','achternaam']">
+                <td width="1"><i ng-click="verwijderGezinslid(lid)" class="fa fa-remove fa-fw"></i></td>
+                <td ng-click="bewerk(lid.$id)">{{getters.naam(lid)}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <input type="text"
+                 ng-model="selected"
+                 uib-typeahead="select as getters.naam(persoon) for persoon in personen | filter:$viewValue | limitTo:8"
+                 class="form-control"
+                 placeholder="Gezinslid toevoegen..."
+                 typeahead-on-select="nieuwGezinslid($item)"
+                 autocomplete="off">
+        </fieldset>
+      </div>
+      <p>&nbsp;</p>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <fieldset>
+          <legend><i class="fa fa-id-card fa-fw"></i> Personalia</legend>
+          <div class="form-group">
+            <label for="roepnaam">Roepnaam</label>
+            <input ng-model="persoon.roepnaam" type="text" class="form-control" id="roepnaam">
+          </div>
+          <div class="form-group">
+            <label for="tussenvoegsels">Tussenvoegsels</label>
+            <input ng-model="persoon.tussenvoegsels" type="text" class="form-control" id="tussenvoegsels">
+          </div>
+          <div class="form-group">
+            <label for="achternaam">Achternaam</label>
+            <input ng-model="persoon.achternaam" type="text" class="form-control" id="achternaam">
+          </div>
+          <div class="form-group">
+            <label>Geslacht</label>
+            <select ng-model="persoon.geslacht" ng-options="geslacht for geslacht in geslachten" class="form-control">
+              <option value=""></option>
+            </select>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="geboortedatum">Geboortedatum</label>
+            <input ng-model="persoon.geboortedatum" type="text" class="form-control" id="geboortedatum" placeholder="dd-mm-jjjj">
+          </div>
+        </fieldset>
+      </div>
+      <div class="col-md-4">
+        <fieldset>
+          <legend><i class="fa fa-envelope fa-fw"></i> Contact</legend>
+          <div class="form-group">
+            <label for="e_mail">E-mail</label>
+            <input ng-model="persoon.e_mail" type="text" class="form-control" id="e_mail">
+          </div>
+          <div class="form-group">
+            <label for="telefoon">Telefoon</label>
+            <input ng-model="persoon.telefoon" type="text" class="form-control" id="telefoon">
+          </div>
+          <div class="form-group">
+            <label for="woonplaats">Woonplaats</label>
+            <input ng-model="persoon.woonplaats" type="text" class="form-control" id="woonplaats">
+          </div>
+        </fieldset>
+      </div>
+      <div class="col-md-4">
+        <fieldset>
+          <legend><i class="fa fa-check-square fa-fw"></i> Status</legend>
+          <div class="form-group">
+            <label>Relatiesoort</label>
+            <select ng-model="persoon.relatiesoort" ng-options="soort for soort in relatiesoorten" class="form-control">
+              <option value=""></option>
+            </select>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input ng-model="persoon.eed_afgelegd" ng-false-value="null" type="checkbox"> Eed afgelegd
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input ng-model="persoon.donateur" ng-false-value="null" type="checkbox"> Donateur
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="woonplaats">IBAN</label>
+            <input ng-model="persoon.iban" type="text" class="form-control" id="iban">
+          </div>
+          <div class="form-group">
+            <label for="notitie">Notitie</label>
+            <textarea ng-model="persoon.notitie" rows="5" class="form-control" id="notitie"></textarea>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+</form>

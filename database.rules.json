@@ -1,0 +1,6 @@
+{
+  "rules": {
+    ".read": "auth.uid === 'nNxRuFjAirOyEOhFUHf7oRTJps92' || auth.uid === 'hClQZiTRI8PlRhn4qy0Y8yGjeOE2'",
+    ".write": "auth.uid === 'nNxRuFjAirOyEOhFUHf7oRTJps92' || auth.uid === 'hClQZiTRI8PlRhn4qy0Y8yGjeOE2'"
+  }
+}

@@ -1,0 +1,17 @@
+<div class="jumbotron">
+  <h2>
+    <img src="images/logo.png" />
+    Ohel Abraham
+  </h2>
+
+  <h1>Relatiebeheer</h1>
+
+  <p>
+    <button ng-if="!firebaseUser" ng-click="auth.$signInWithPopup('google')" type="button" class="btn btn-primary btn-lg">
+      <i class="fa fa-sign-in fa-lg fa-fw"></i> Aanmelden
+    </button>
+    <button ng-if="firebaseUser" ng-click="auth.$signOut()" type="button" class="btn btn-primary btn-lg">
+      <i class="fa fa-sign-out fa-lg fa-fw"></i> {{firebaseUser.displayName}} afmelden
+    </button>
+  </p>
+</div>
